@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gobernación de Casanare - Plan de Acción Territorial - PAT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            background-color: #013220; /* Dark Green */
+            background-image: linear-gradient(180deg, #013220 0%, #002316 100%);
+        }
+        .card {
+            transition: all 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: cardFadeIn 0.5s ease-out forwards;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        @keyframes cardFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .sticky-nav {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+        }
+        .progress-circle {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+        }
+        .progress-circle::before {
+            content: "";
+            position: absolute;
+            height: 80%;
+            width: 80%;
+            background-color: #f8fafc;
+            border-radius: 50%;
+        }
+        .progress-circle .value {
+            position: relative;
+            font-weight: 900;
+            font-size: 1.75rem;
+        }
+        .full-observation-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .full-observation-container.open {
+            max-height: 500px; /* Adjust as needed */
+        }
+        /* Gobernacion Colors */
+        .gobernacion-green { color: #009A3F; }
+        .bg-gobernacion-green { background-color: #009A3F; }
+        .border-gobernacion-green { border-color: #009A3F; }
+        
+        .gobernacion-yellow { color: #FCD116; }
+        .bg-gobernacion-yellow { background-color: #FCD116; }
+
+        .gobernacion-red { color: #CE1126; }
+        .bg-gobernacion-red { background-color: #CE1126; }
+        
+        .gobernacion-header {
+            background: #FFFFFF;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .filter-btn.active {
+            background-color: #009A3F;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Página de Inicio / Portada -->
+    <div id="portada" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-900 via-green-800 to-green-700 relative overflow-hidden">
+        <!-- Fondo con patrón sutil -->
+        <div class="absolute inset-0 bg-black opacity-10"></div>
+        
+        <!-- Contenido principal -->
+        <div class="relative z-10 text-center text-white px-6 max-w-4xl mx-auto">
+            <!-- Escudo de la Gobernación -->
+            <div class="mb-8 flex justify-center">
+                <img src="PATimagenes/ESCUDO GOBERNACIÓN CASANARE.png" alt="Escudo Gobernación de Casanare" class="w-48 h-48 object-contain drop-shadow-2xl">
+            </div>
+            
+            <!-- Título principal -->
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 text-white drop-shadow-lg">
+                Plan de Acción Territorial
+            </h1>
+            
+            <!-- Subtítulo -->
+            <h2 class="text-2xl md:text-3xl font-semibold mb-8 text-yellow-300 drop-shadow-md">
+                Plan de Acción Territorial - PAT
+            </h2>
+            
+            <!-- Descripción -->
+            <p class="text-lg md:text-xl text-gray-200 mb-12 max-w-2xl mx-auto leading-relaxed">
+                Presentamos el seguimiento integral de nuestros programas y proyectos, 
+                demostrando el compromiso con el desarrollo y bienestar de Casanare.
+            </p>
+            
+            <!-- Botón para continuar -->
+            <button onclick="scrollToContent()" class="bg-yellow-400 hover:bg-yellow-500 text-green-900 font-bold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                Ver Informe Completo
+            </button>
+        </div>
+        
+        <!-- Elementos decorativos -->
+        <div class="absolute top-10 left-10 w-20 h-20 border-2 border-yellow-400 opacity-30 rounded-full"></div>
+        <div class="absolute bottom-20 right-10 w-16 h-16 border-2 border-yellow-400 opacity-30 rounded-full"></div>
+        <div class="absolute top-1/3 right-20 w-12 h-12 border-2 border-yellow-400 opacity-20 rounded-full"></div>
+    </div>
+
+    <header class="bg-white text-gray-800">
+        <div class="gobernacion-header p-4 flex justify-between items-center">
+            <button onclick="scrollToPortada()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+                <span>Inicio</span>
+            </button>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Escudo_de_Casanare.svg" alt="Escudo Gobernación de Casanare" class="h-24">
+            <div class="w-32"></div> <!-- Espaciador para mantener el escudo centrado -->
+        </div>
+        <div class="container mx-auto px-6 py-16">
+            <div class="text-center mb-12">
+                <h1 class="text-2xl font-semibold text-gray-600">Primer Seguimiento al</h1>
+                <h2 class="text-4xl md:text-6xl font-black mb-4 tracking-tight text-gray-900">Plan de Acción Territorial - PAT 2024-2025</h2>
+                <p class="text-lg max-w-3xl mx-auto text-gray-600 mt-6">
+                    El Plan de Acción Territorial (PAT) es la hoja de ruta estratégica de la Gobernación para implementar la política pública de víctimas. Este instrumento articula la oferta institucional y los recursos para garantizar los derechos a la <strong>asistencia, atención y reparación integral</strong> de la población afectada por el conflicto armado en nuestro departamento.
+                </p>
+            </div>
+            
+            <!-- Imágenes de presentación del PAT -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <img src="PATimagenes/patfotodeporatda.jpeg" alt="Presentación del PAT" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-800 mb-2">Presentación del PAT</h3>
+                        <p class="text-sm text-gray-600">Presentación oficial del Plan de Acción Territorial</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <img src="PATimagenes/asistencia-humanitaria.jpeg" alt="Asistencia Humanitaria" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-800 mb-2">Asistencia Humanitaria</h3>
+                        <p class="text-sm text-gray-600">Programas de apoyo y asistencia a víctimas</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <img src="PATimagenes/mesa-participacion.jpeg" alt="Mesas de Participación" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-800 mb-2">Mesas de Participación</h3>
+                        <p class="text-sm text-gray-600">Espacios de diálogo y participación ciudadana</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <img src="PATimagenes/alertas-tempranas.jpeg" alt="Alertas Tempranas" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-800 mb-2">Sistema de Alertas</h3>
+                        <p class="text-sm text-gray-600">Sistema de alertas tempranas para protección</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <img src="PATimagenes/AdultoMayor.jpeg" alt="Atención Adulto Mayor" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-800 mb-2">Atención Adulto Mayor</h3>
+                        <p class="text-sm text-gray-600">Programas especializados para adultos mayores</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <img src="PATimagenes/Transporteescolar.jpeg" alt="Transporte Escolar" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-800 mb-2">Transporte Escolar</h3>
+                        <p class="text-sm text-gray-600">Garantizando el acceso a la educación</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="sticky-nav bg-white/80 shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-center items-center space-x-2 md:space-x-4 overflow-x-auto py-3">
+                <a href="#gobierno" class="text-sm md:text-base text-gray-600 hover:gobernacion-green font-semibold px-3 py-2 rounded-md transition">Gobierno</a>
+                <a href="#salud" class="text-sm md:text-base text-gray-600 hover:gobernacion-green font-semibold px-3 py-2 rounded-md transition">Salud</a>
+                <a href="#educacion" class="text-sm md:text-base text-gray-600 hover:gobernacion-green font-semibold px-3 py-2 rounded-md transition">Educación</a>
+                <a href="#agricultura" class="text-sm md:text-base text-gray-600 hover:gobernacion-green font-semibold px-3 py-2 rounded-md transition">Agricultura</a>
+                <a href="#vivienda" class="text-sm md:text-base text-gray-600 hover:gobernacion-green font-semibold px-3 py-2 rounded-md transition">Vivienda</a>
+                <a href="#integracion" class="text-sm md:text-base text-gray-600 hover:gobernacion-green font-semibold px-3 py-2 rounded-md transition">Integración</a>
+                <a href="#cultura" class="text-sm md:text-base text-gray-600 hover:gobernacion-green font-semibold px-3 py-2 rounded-md transition">Cultura</a>
+                <a href="#indercas" class="text-sm md:text-base text-gray-600 hover:gobernacion-green font-semibold px-3 py-2 rounded-md transition">INDERCAS</a>
+                <a href="#analisis" class="text-sm md:text-base gobernacion-green hover:text-green-800 font-bold px-3 py-2 rounded-md transition">Análisis</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-4 md:p-8">
+        <!-- Gráfica General de Presupuesto -->
+        <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-12">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Distribución del Presupuesto PAT</h2>
+                <p class="text-lg text-gray-600 max-w-4xl mx-auto">
+                    El Plan de Acción Territorial cuenta con un presupuesto total de <strong>$171,000 millones</strong> 
+                    distribuidos estratégicamente entre las diferentes secretarías para garantizar la atención integral 
+                    a las víctimas del conflicto armado en Casanare.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Presupuesto por Secretaría</h3>
+                    <p class="text-gray-600 mb-6">
+                        La distribución presupuestal refleja las prioridades del gobierno departamental, 
+                        con un enfoque especial en <strong>Salud y Educación</strong> que representan más del 90% 
+                        del presupuesto total, seguidos por las acciones de <strong>Gobierno</strong> para la 
+                        atención y protección de víctimas.
+                    </p>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                            <span class="font-semibold text-green-800">Salud</span>
+                            <span class="font-bold text-green-900">$90,822 M</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                            <span class="font-semibold text-blue-800">Educación</span>
+                            <span class="font-bold text-blue-900">$69,158 M</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
+                            <span class="font-semibold text-yellow-800">Gobierno</span>
+                            <span class="font-bold text-yellow-900">$8,202 M</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                            <span class="font-semibold text-purple-800">Integración Social</span>
+                            <span class="font-bold text-purple-900">$1,884 M</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
+                            <span class="font-semibold text-orange-800">Agricultura</span>
+                            <span class="font-bold text-orange-900">$1,195 M</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="h-80">
+                    <canvas id="generalBudgetChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-xl shadow-md mb-12">
+            <div class="flex flex-wrap justify-center items-center gap-3">
+                <span class="font-semibold text-gray-700">Filtrar por estado:</span>
+                <button class="filter-btn active" onclick="filterCards('all')">Todos</button>
+                <button class="filter-btn" onclick="filterCards('ok')">En Ejecución</button>
+                <button class="filter-btn" onclick="filterCards('planeacion')">En Planeación</button>
+                <button class="filter-btn" onclick="filterCards('alerta')">Oportunidades de Mejora</button>
+                <button class="filter-btn" onclick="filterCards('retraso')">Sin Avance</button>
+            </div>
+        </div>
+
+        <div id="dependencias" class="space-y-12">
+            
+            <section id="salud" class="pt-16 -mt-16">
+                <h2 class="text-4xl font-bold text-white mb-8">Secretaría de Salud</h2>
+                 <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8 grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Resumen de Gestión</h3>
+                        <p class="text-gray-600">Salud demuestra una alta efectividad en la garantía de <strong>derechos fundamentales</strong>, como la <strong>afiliación universal</strong>. Se presenta una oportunidad estratégica para integrar los sistemas de información y así visibilizar la totalidad del impacto de programas tan exitosos como el <strong>PAPSIVI</strong>, que ha <strong>superado sus metas de atención</strong> gracias a la articulación con la nación.</p>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="saludChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8" data-dependency="salud"></div>
+            </section>
+
+            <section id="educacion" class="pt-16 -mt-16">
+                <h2 class="text-4xl font-bold text-white mb-8">Secretaría de Educación</h2>
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8 grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Resumen de Gestión</h3>
+                        <p class="text-gray-600">Educación presenta un <strong>desempeño sobresaliente</strong>, con todas sus acciones en plena ejecución y una cobertura de metas de producto <strong>cercana al 100%</strong>. Esto demuestra una alta capacidad operativa y logística para llegar a la población víctima en todo el departamento, garantizando su <strong>acceso y permanencia</strong> en el sistema educativo.</p>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="educacionChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8" data-dependency="educacion"></div>
+            </section>
+
+            <section id="gobierno" class="pt-16 -mt-16">
+                <h2 class="text-4xl font-bold text-white mb-8">Secretaría de Gobierno</h2>
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8 grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Resumen de Gestión</h3>
+                        <p class="text-gray-600">La Secretaría de Gobierno demuestra una sólida ejecución en el fortalecimiento de la <strong>participación ciudadana</strong> y la <strong>asistencia a víctimas</strong>. El enfoque estratégico se centra en avanzar en la materialización de los proyectos de <strong>infraestructura y memoria histórica</strong> que se encuentran en fase de estructuración, para complementar los excelentes resultados ya obtenidos.</p>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="gobiernoChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8" data-dependency="gobierno"></div>
+            </section>
+
+            <section id="agricultura" class="pt-16 -mt-16">
+                <h2 class="text-4xl font-bold text-white mb-8">Secretaría de Agricultura</h2>
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8 grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Resumen de Gestión</h3>
+                        <p class="text-gray-600">Esta secretaría avanza con éxito en programas de alto impacto como las <strong>Alianzas Productivas</strong>. Paralelamente, se progresa en la estructuración de nuevas iniciativas de generación de ingresos, como los <strong>negocios verdes y las líneas de crédito</strong>, para ampliar y diversificar el apoyo a la estabilización económica de las víctimas.</p>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="agriculturaChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8" data-dependency="agricultura"></div>
+            </section>
+
+            <section id="vivienda" class="pt-16 -mt-16">
+                <h2 class="text-4xl font-bold text-white mb-8">Dirección de Vivienda</h2>
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8 grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Resumen de Gestión</h3>
+                        <p class="text-gray-600">Vivienda demuestra un <strong>compromiso excepcional</strong>, con una dinámica de inversión que ha <strong>superado las proyecciones iniciales</strong> para entregar soluciones habitacionales. Se presenta la oportunidad de alinear los reportes financieros para reflejar con total precisión esta <strong>gestión proactiva</strong> y el impacto logrado en las familias beneficiadas.</p>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="viviendaChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8" data-dependency="vivienda"></div>
+            </section>
+
+            <section id="cultura" class="pt-16 -mt-16">
+                <h2 class="text-4xl font-bold text-white mb-8">Dirección de Cultura</h2>
+                 <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8 grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Resumen de Gestión</h3>
+                        <p class="text-gray-600">Cultura avanza firmemente en la ejecución de su <strong>agenda cultural</strong> y programas de promoción. Se gestionan activamente las articulaciones necesarias para materializar los proyectos de <strong>memoria histórica</strong>, asegurando así su pertinencia y sostenibilidad a largo plazo, mientras se optimizan los procesos administrativos para futuras contrataciones.</p>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="culturaChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8" data-dependency="cultura"></div>
+            </section>
+
+            <section id="indercas" class="pt-16 -mt-16">
+                <h2 class="text-4xl font-bold text-white mb-8">INDERCAS</h2>
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8 grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Resumen de Gestión</h3>
+                        <p class="text-gray-600">INDERCAS ha <strong>planificado estratégicamente</strong> su ejecución para la siguiente vigencia. Se han asegurado y anualizado los recursos necesarios para llevar a cabo su importante evento de <strong>cohesión social</strong> en Chámeza, demostrando una gestión planificada y orientada a resultados concretos.</p>
+                    </div>
+                    <div class="relative h-64"><canvas id="indercasChart"></canvas></div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8" data-dependency="indercas"></div>
+            </section>
+
+            <section id="integracion" class="pt-16 -mt-16">
+                <h2 class="text-4xl font-bold text-white mb-8">Secretaría de Integración Social</h2>
+                <div class="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8 grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Resumen de Gestión</h3>
+                        <p class="text-gray-600">Esta secretaría centra su robusta ejecución en el programa de <strong>Atención Integral al Adulto Mayor</strong>, demostrando un compromiso total y una gestión financiera <strong>altamente efectiva</strong> para proteger a esta población vulnerable, cumpliendo casi en su totalidad con el presupuesto asignado para la vigencia.</p>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="integracionChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8" data-dependency="integracion"></div>
+            </section>
+        </div>
+
+    </main>
+    
+    <footer class="gobernacion-header text-gray-800 mt-12">
+        <div class="container mx-auto p-6 text-center">
+            <p>&copy; 2025 Gobernación de Casanare. Es Con El Pueblo.</p>
+        </div>
+    </footer>
+
+    <script>
+        const patData = {
+            gobierno: [
+                { id: 54448, action: "Adecuación de Puntos de Atención a Víctimas (Infraestructura)", budget: 5000000000, exec2024: 0, exec2025: 0, summary: "Es una acción proyectada para futuras vigencias. Ya se han realizado gestiones, mesas de trabajo y se cuenta con lotes u oficinas disponibles en Paz de Ariporo y Villanueva.", obs: "ES UNA ACCION PROYECTADA PARA FUTURAS VIGENCIAS. YA SE HAN REALIZADO GESTIONES, MESAS DE TRABAJO Y SE CUENTA CON LOTES U OFICINAS DISPONIBLES EN PAZ DE ARIPORO Y VILLANUEVA.", status: "planeacion", indicadorProducto: "Adecuar, Mejorar y/o Equipar los puntos de atención a víctimas de Yopal, Paz de Ariporo y Villanueva", meta: 3, atendida: 0, image: "PATimagenes/patfotodeporatda.jpeg" },
+                { id: 54450, action: "Adecuar, Mejorar y/o Equipar los puntos de atención a víctimas de Yopal, Paz de Ariporo y Villanueva", budget: 125000000, exec2024: 0, exec2025: 0, summary: "Esta acción se encuentra en fase de planeación para su ejecución en vigencias futuras.", obs: "SE PROYECTA PARA LAS PROXIMAS VIGENCIAS.", status: "planeacion", indicadorProducto: "Contratación de profesionales para el proyecto", meta: 3, atendida: 0 },
+                { id: 54454, action: "Ayuda Humanitaria Inmediata (Otros Hechos)", budget: 20000000, exec2024: 0, exec2025: 0, summary: "Se tienen recursos disponibles y se actúa bajo el principio de subsidiariedad, a la espera de requerimientos por parte de las alcaldías.", obs: "SE TIENEN RECURSOS DISPONIBLES Y SE ACTUA BAJO EL PRINCIPIO DE SUBSIDIARIDAD, A LA ESPERA DE REQUERIMIENTOS POR PARTE DE LAS ALCALDIAS.", status: "retraso", indicadorProducto: "Brindar asistencia humanitaria a la población víctima de hechos diferentes al desplazamiento", meta: 33, atendida: 0, image: "PATimagenes/asistencia-humanitaria.jpeg" },
+                { id: 54456, action: "Atención Humanitaria Inmediata por Desplazamiento", budget: 50000000, exec2024: 3737360, exec2025: 0, summary: "Se brindó apoyo subsidiario al municipio de Yopal para atender solicitudes de ayuda humanitaria. Se encuentra en proceso una solicitud de apoyo subsidiario para el municipio de Tauramena.", obs: "SE BRINDO APOYO SUBSIDIARIO AL MUNICIPIO DE YOPAL PARA ATENDER SOLICITUDES DE AYUDA HUMANITARIA. SE ENCUENTRA EN PROCESO UNA SOLICITUD DE APOYO SUBSIDIARIO PARA EL MUNICIPIO DE TAURAMENA.", status: "ok", indicadorProducto: "Brindar asistencia humanitaria a la población víctima del conflicto del Departamento de Casanare", meta: 100, atendida: 23 },
+                { id: 54458, action: "Asistencia Funeraria", budget: 10000000, exec2024: 0, exec2025: 0, summary: "A la fecha del informe, no se han recepcionado solicitudes para este apoyo.", obs: "A LA FECHA DEL INFORME, NO SE HAN RECEPCIONADO SOLICITUDES PARA ESTE APOYO.", status: "retraso", indicadorProducto: "Garantizar la asistencia funeraria", meta: 4, atendida: 0 },
+                { id: 54940, action: "Articular acciones interinstitucionales para la búsqueda de personas desaparecidas en el marco del conflicto armado", budget: 90000000, exec2024: 0, exec2025: 0, summary: "La ejecución de los recursos se encuentra en proceso de concertación. Se ha definido un plan de acción que incluye una galería fotográfica, un encuentro departamental en Sabanalarga, un foro académico sobre desaparición forzada y un encuentro de mujeres y hombres buscadores en Aguazul.", obs: "BÚSQUEDA DE PERSONAS DESAPARECIDAS EN EL MARCO DEL CONFLICTO ARMADO (MINIMA) CON ESTA ACTIVIDAD SE CUMPLE CON EL COMPROMISO DEL CUATRIENIO. PAT SE ENVIO SOLICITUD PARA CONCERTAR LA EJECUCION DE ESTOS RECURSOS. GALERIA FOTOGRAFICA, ENCUENTRO DEPARTAMETAL EN SABANALARGA, EL FORO ACADEMICO EN DESAPARICION FORZADA, ENCUENTRO MUJERES Y HOMBRES BUSCADORAS EN AGUZUL. PROYECION $ 90.000.000.", status: "planeacion", indicadorProducto: "victimas que acceden a medidas de satisfacción", meta: 100, atendida: 0 },
+                { id: 54998, action: "Brindar asistencia técnica para los Planes de Retorno y Reubicación", budget: 120000000, exec2024: 0, exec2025: 8745220, summary: "Se cuenta con un profesional que realiza acompañamiento y seguimiento a los 16 planes de retorno y reubicación existentes en el departamento. En 2025 se han realizado dos mesas de trabajo.", obs: "PROFESIONAL REALIZA ACOMPAÑMIENTO, SEGUIMIENTO EN PLANES DE RETORNOS Y REUBICACIONES.- De acuerdo a información aportada por la Unidad para las víctimas, el departamento de Casanare cuenta con 16 planes de retorno y reubicación comunitarios no étnicos:", status: "ok", indicadorProducto: "Documentos de planeación elaborados", meta: 2, atendida: 1 },
+                { id: 54460, action: "Medidas de Memoria Histórica", budget: 100000000, exec2024: 0, exec2025: 0, summary: "La actividad se encuentra pendiente de concertación con la MDPEV. Para 2025, se tienen recursos disponibles por $50,000,000.", obs: "LA ACTIVIDAD SE ENCUENTRA PENDIENTE DE CONCERTACION CON LA MDPEV. PARA 2025, SE TIENEN RECURSOS DISPONIBLES POR $50.000.000.", status: "planeacion", indicadorProducto: "Implementar monumentos o acciones de memoria histórica", meta: 2, atendida: 0, image: "PATimagenes/gobierno conmemoracioness medias desatisfaciion.jpeg" },
+                { id: 54462, action: "Garantías para la Participación Efectiva de las Víctimas", budget: 516378480, exec2024: 248518899, exec2025: 219488079, summary: "Se ha garantizado de manera continua la participación de los miembros de la MDPEV. Para 2024, se financiaron 78 espacios institucionales. Para 2025, se han financiado 42 espacios y se proyectaron recursos por más de $452 millones, mostrando un cumplimiento acumulado superior al 90% en la ejecución de los recursos para las sesiones de la mesa.", obs: "SE HAN GARANTIZADO LA PARTICIPACION DE LOS MIEMBROS EN LOS RESPECTIVOS ESPACIOS, PARA LA VIGENCIA 2025 SE PROYECTO RECURSOS POR VALOR $452.971.940.", status: "ok", indicadorProducto: "Brindar garantías para el funcionamiento de la Mesa Departamental de Participación Efectiva de las Víctimas (MDPEV) y su participación en espacios institucionales", meta: 16, atendida: 16, image: "PATimagenes/Mesasdetrabajo.jpeg" },
+                { id: 56398, action: "Garantías para participación en espacios institucionales", budget: 331118392, exec2024: 0, exec2025: 0, summary: "Acción planificada sin ejecución reportada hasta la fecha.", obs: "(Sin observaciones relevantes)", status: "retraso", indicadorProducto: "garantias economicas de compensacion y logistica", meta: 804, atendida: 0 },
+                { id: 54465, action: "Elecciones de Mesas de Participación", budget: 102000000, exec2024: 0, exec2025: 0, summary: "Se trata de una proyección de recursos para la elección de la MDPEV que se realizará en la vigencia 2027.", obs: "SE TRATA DE UNA PROYECCION DE RECURSOS PARA LA ELECCION DE LA MDPEV QUE SE REALIZARA EN LA VIGENCIA 2027.", status: "planeacion", indicadorProducto: "Garantizar los recursos financieros para la elección de la mesa de participación 2027", meta: 1, atendida: 0 },
+                { id: 55878, action: "Apoyo al Plan de Trabajo de la MDPEV", budget: 100000000, exec2024: 87449847, exec2025: 0, summary: "Se apoyó un intercambio a Santa Marta para 33 representantes de la mesa de víctimas.", obs: "SE APOYO UN INTERCAMBIO A SANTA MARTA PARA 33 REPRESENTANTES DE LA MESA DE VICTIMAS.", status: "ok", indicadorProducto: "Apoyar acciones e incentivos diferentes a las sesiones formales", meta: 2, atendida: 1 },
+                { id: 54676, action: "Asistencia y Orientación Jurídica a Víctimas", budget: 181000000, exec2024: 35349288, exec2025: 30611770, summary: "Se atendieron 930 víctimas en 2024. Se han realizado 634 atenciones a personas y organizaciones en 2025.", obs: "PROFESIONAL QUE BRINDA ACOMPAÑAMIENTO JURIDICO A LA POBLACION VICTIMA DEL CONFLICTO ARMADO EN EL PUNTO DE ATENCION A VICTIMAS YOPAL, VILLANUEVA Y PAZ DE ARIPORO. EN EL 2024 SE ATENDIO 930 VICTIMAS Y EN EL 2025 SE REALIZARON 634 ATENCIONES A PERSONAS Y ORGANIZACIONES.", status: "ok", indicadorProducto: "Brindar asistencia y orientación jurídica en los Puntos de Atención a Víctimas", meta: 2, atendida: 2, image: "PATimagenes/acompaÃ±amiento-juridico.jpeg" },
+                { id: 54719, action: "Asistencia y Orientación Psicosocial a Víctimas", budget: 72000000, exec2024: 27331920, exec2025: 26238640, summary: "Se realizaron 161 atenciones individuales, 20 visitas psicosociales y 3 talleres con 150 asistentes en 2024. Se han realizado 136 atenciones individuales y 4 talleres psicosociales con 102 usuarios en 2025.", obs: "PROFESIONAL QUE BRINDA ORIENTACION Y ASISTENCIA A LOS USUARIOS VICTIMAS DEL CONFLICTO ARMADO QUE ASISTEN AL PUNTO DE ATENCION A VICTIMAS- SE HAN RELIZADO 136 ATENCIONES INDIVIDUALES EN YOPAL. 4 TALLERES PSICOSOCIALES CON 102 USUARIOS", status: "ok", indicadorProducto: "Brindar asistencia y orientación psicosocial en el Punto de Atención a Víctimas de Yopal", meta: 2, atendida: 2 },
+                { id: 54798, action: "Acompañamiento en Procesos de Restitución de Tierras", budget: 150000000, exec2024: 30611649, exec2025: 0, summary: "Se participó en 2 sesiones de la comisión de tierras en 2024. Se realiza acompañamiento permanente a la comisión de tierras en 2025.", obs: "VERIFICAR EL CUMPLIMIENTO DE LAS ORDENES CONTENIDAS EN LOS FALLOS DE RESTITUCION DE TIERRAS EN EL DEPARTAMENTO DE CASANARE Y SEGUIMIENTO A LA EJECUCION DEL PLAN OPERATIVO ANUAL (POA) 2024 DE LA COMISION DE TIERRAS DEL COMITE DE JUSTICIA TRANSICIONAL.", status: "ok", indicadorProducto: "Brindar asistencia técnica para la articulación interinstitucional en la implementación de la política de restitución de tierras", meta: 4, atendida: 1 },
+                { id: 55033, action: "Medidas de Satisfacción y Conmemoraciones", budget: 130000000, exec2024: 25874216, exec2025: 130495048, summary: "Se realizaron 3 sesiones de la Mesa de Desaparición Forzada, 4 sesiones de medidas de satisfacción y se beneficiaron 495 jóvenes en jornadas de definición de situación militar en 2024. Se han realizado 2 sesiones de la comisión de satisfacción en 2025.", obs: "MEDIDAS DE SATISFACCION. CONMEMORACIONES Y PROCESOS PARA LOGISTICA CJT, PLENARIOS. COMITÉ DE ETICA Y COMITÉS EJECUTIVOS, ACCIONES DE PREVENCION DE RECLUTAMIENTO DE MENORES EN TAURAMENA MANI MONTERREY Y YOPAL ENCUENTRO DE MINAS YOPAL, ENCUENTRO DE CORDINADORES DE LAS MESAS MUNICIPAL Y MESA DEPARTAMENTAL ENYOPAL, JORNADA PARA LOS NARP, ENCUENTRO DE MUJERES DE VIOLENCIA SEXUAL EN TAMARA, PARTIDO DE FUTBOL ENTORNO SEMANA DE LA PAZ. SE ENCUETRA PUBLICADO.", status: "alerta", indicadorProducto: "Planes de acción articulados", meta: 4, atendida: 4 },
+                { id: 55040, action: "Formulación y Actualización de Planes de Contingencia", budget: 100000000, exec2024: 30611649, exec2025: 8746225, summary: "Se elaboró un plan de contingencia en 2024. Se actualizó un plan y se brindó asistencia técnica a los municipios de Sabanalarga, Villanueva, Monterrey, Tauramena, Támara, San Luis de Palenque y Sácama en 2025.", obs: "SE ELABORO UN PLAN DE CONTINGENCIA EN 2024. SE ACTUALIZO UN PLAN Y SE BRINDO ASISTENCIA TECNICA A LOS MUNICIPIOS DE SABANALARGA, VILLANUEVA, MONTERREY, TAURAMENA, TAMARA, SAN LUIS DE PALENQUE Y SACAMA EN 2025.", status: "ok", indicadorProducto: "Brindar asistencia técnica para la formulación de planes de contingencia municipales", meta: 3, atendida: 1 },
+                { id: 55157, action: "Formulación y Actualización de Planes de Prevención Integral", budget: 100000000, exec2024: 13119321, exec2025: 13119321, summary: "Se elaboró un plan de prevención en 2024. Se brindó asistencia técnica a seis municipios en 2025.", obs: "SE ELABORO UN PLAN DE PREVENCION EN 2024. SE BRINDO ASISTENCIA TECNICA A SEIS MUNICIPIOS EN 2025.", status: "ok", indicadorProducto: "Brindar asistencia técnica para la formulación de planes de prevención integral", meta: 3, atendida: 1 },
+                { id: 55164, action: "Prevención del Reclutamiento Forzado", budget: 50000000, exec2024: 28060780, exec2025: 30611760, summary: "Se realizaron 3 jornadas de socialización en medios de comunicación y 4 jornadas de socialización en los municipios de Tauramena, Maní, Yopal, Monterrey, Paz de Ariporo, Pore y Támara en 2024. Se han realizado 2 sesiones de la comisión intersectorial de prevención de reclutamiento y se han brindado 6 asistencias técnicas a los municipios de Paz de Ariporo, Pore, Támara, Nunchía, Trinidad y San Luis de Palenque en 2025.", obs: "SE REALIZA ASISTENCIA JURIDICA, ACOMPAÑAMIENTO ACCIONES RE RECLUTAMIENTO FORZADO.DOS (2) SESIONES DE LA COMISIÓN DE PREVENCIÓN DE RECLUTAMIENTO, USO Y VIOLENCIA SEXUAL EN CONTRA DE NIÑOS, NIÑAS Y ADOLESCENTES EN EL DEPARTAMENTO DE CASANARE PARA LA VIGENCIA 2025.", status: "alerta", indicadorProducto: "Planes de acción articulados", meta: 2, atendida: 2 },
+                { id: 55167, action: "Acciones de Visibilización de Derechos Humanos", budget: 30000000, exec2024: 10203920, exec2025: 0, summary: "Se entregó un documento técnico que identifica a las asociaciones, organizaciones de víctimas y ONG en los 19 municipios en 2024.", obs: "SE ENTREGO UN DOCUMENTO TECNICO QUE IDENTIFICA A LAS ASOCIACIONES, ORGANIZACIONES DE VICTIMAS Y ONG EN LOS 19 MUNICIPIOS.", status: "ok", indicadorProducto: "Implementar acciones de protección, visibilización y sensibilización frente a los DDHH", meta: 2, atendida: 1 },
+                { id: 55173, action: "Seguimiento a Alertas Tempranas", budget: 150000000, exec2024: 30611749, exec2025: 30611760, summary: "Se brindó asistencia técnica a los enlaces municipales de Paz de Ariporo, Hato Corozal, Aguazul, Yopal y Pore, y se generaron 42 reportes bimensuales en 2024. Se realizaron 4 asistencias técnicas y 2 sesiones de la mesa de desaparición forzada en 2025.", obs: "SE BRINDO ASISTENCIA TECNICA A LOS ENLACES MUNICIPALES DE PAZ DE ARIPORO, HATO COROZAL, AGUAZUL, YOPAL Y PORE, Y SE GENERARON 42 REPORTES BIMENSUALES EN 2024. SE REALIZARON 4 ASISTENCIAS TECNICAS Y 2 SESIONES DE LA MESA DE DESAPARICION FORZADA EN 2025.", status: "ok", indicadorProducto: "Brindar asistencia técnica para la operatividad y seguimiento a alertas tempranas y desaparición forzada", meta: 3, atendida: 2, image: "PATimagenes/alertas-tempranas.jpeg" },
+                { id: 55180, action: "Caracterización de Víctimas", budget: 90000000, exec2024: 0, exec2025: 0, summary: "Para ajuste en el PAT. La Gobernación no realiza caracterización directamente.", obs: "PARA AJUSTE EN EL PAT. LA GOBERNACION NO RELIZA CARACTERIZACION DIRECTAMENTE.", status: "retraso", indicadorProducto: "Aplicar mecanismos de caracterización de víctimas", meta: 2, atendida: 0 },
+                { id: 55194, action: "Plan Operativo de Sistemas de Información (POSI)", budget: 90000000, exec2024: 0, exec2025: 8746214, summary: "Se formuló y aprobó un Plan Operativo de Sistemas de Información (POSI) para la vigencia en 2024. Se realizó un seguimiento al POSI formulado en 2025.", obs: "PROFESIONAL QUE REALIZA SEGUIMIENTO A SISTEMA DE INFORMACION POSI. Y REALIZO SEGUIMIENTO AL POSI.", status: "ok", indicadorProducto: "Planes de acción articulados", meta: 2, atendida: 1 },
+                { id: 55198, action: "Operatividad del Eje de Sistemas de Información", budget: 180000000, exec2024: 75800530, exec2025: 52477284, summary: "Se realizaron 3 sesiones del Subcomité de Sistemas de Información; se formuló y aprobó el PAT 2024-2027 y se cargó en la plataforma VIVANTO; y se generaron 3 reportes del Formato Único Territorial (FUT) en 2024. Se ha realizado 1 sesión del subcomité y se han generado 2 reportes FUT en 2025. Se ofreció capacitación virtual en cursos MinTIC a miembros de las mesas de víctimas.", obs: "PROFESIONAL QUE REALIZA ACOMPAÑAMIENTO PARA LA OPERATIVIDAD DEL EJE DE SISTEMAS DE INFORMACION, PARA EL 2025 1 CAPACITACION VIRTUAL A INTEGRANTES MDPV Y COORDINADORES DE LAS MESAS MUNICIPALES DE VICTIMAS DE 19 MUNICIPIO EN CURSOS MINTIC. OFERTA CURSO PRESENCIALES MINTIC EN UNITROPICO. PROFESIONAL QUE REALIZA ELABORACION DE REPORTES RELACIONADOS CON EL PLAN DE ACCION TERRITORIAL PAT, FORMATO UNICO TERRITORIAL FUT RESOLUCION 1536/2016", status: "ok", indicadorProducto: "Planes de acción articulados", meta: 3, atendida: 3 },
+                { id: 55213, action: "Asistencia Técnica a Mesas Municipales de Participación", budget: 180000000, exec2024: 57441608, exec2025: 40540398, summary: "Se brindó asistencia técnica a 9 mesas municipales y a la MDPEV en 2024. Se ha brindado asistencia a 7 mesas municipales y a la MDPEV, y se ha apoyado la elaboración de actos administrativos en 2025.", obs: "PROFESIONAL QUE BRINDA ASISTENCIA TECNICA Y ACOMPAÑAMIENTO A LAS MESAS MUNICIPALES DE PARTICIPACION.", status: "ok", indicadorProducto: "Brindar asistencia técnica y acompañamiento a las mesas municipales de participación", meta: 1, atendida: 1, image: "PATimagenes/asistenciatecnicamesasmunicipales.jpeg" },
+                { id: 55231, action: "Asistencia Psicosocial en Puntos de Atención", budget: 135000000, exec2024: 0, exec2025: 8746214, summary: "No se reportan atenciones para 2024. Se han atendido 16 familias a través de visitas psicosociales y se han realizado 2 sesiones del Subcomité de Rehabilitación en 2025.", obs: "BRINDAR ASISTENCIA PSICOSOCIAL A LOS USUARIOS VICTIMAS DEL CONFLICTO ARMADO QUE ASISTEN AL PUNTO DE ATENCION A VICTIMAS.", status: "ok", indicadorProducto: "Brindar asistencia psicosocial a los usuarios víctimas del conflicto armado que asisten al Punto de Atención a Víctimas", meta: 1, atendida: 1 },
+            ],
+            salud: [
+                { id: 54140, action: "Sostenibilidad de la Afiliación al Régimen Subsidiado", budget: 80000000000, exec2024: 4447230072, exec2025: 1773659733.51, obs: "RECURSOS EJECUTADOS CON CORTE A JUNIO 2025. CORRESPONDE A LA SOSTENIBILIDAD DE PERSONAS AFILIADAS AL REGIMEN SUBSIDIADO, TRANSFERENCIA DIRECTA AL ADRES.", status: "ok", indicadorProducto: "Mantener anualmente la sostenibilidad de la afiliación al régimen subsidiado en el Departamento", meta: 72000, atendida: 72000 },
+                { id: 54187, action: "Auditoría y Visitas a Entidades Promotoras de Salud (EPS)", budget: 120000000, exec2024: 25000000, exec2025: 12000000, obs: "RECURSOS EJECUTADOS A JUNIO 2025, ACCIONES DE SEGUIMIENTO Y MONITOREO A LAS ACCIONES DE ASEGURAMIENTO; 4 EPS CAPRESOCA, SANITAS, NUEVA EPS Y COSALU.", status: "ok", indicadorProducto: "Realizar inspección y vigilancia a las EPS habilitadas en el Departamento en el cumplimiento de las acciones de aseguramiento y prestación de servicios de salud", meta: 16, atendida: 8 },
+                { id: 54204, action: "Promoción de la Salud con Enfoque Diferencial", budget: 1600000000, exec2024: 29000000, exec2025: null, obs: "PARA EL 2024 SE REALIZO UN ENCUENTRO DEPARTAMENTAL EN SALUD CON LA MESA DEPARTAMENTAL DE PARTICIPACION EFECTIVA DE LAS VICTIMAS (MDPEV) EN TAMARA. PARA EL 2025 SE CONCERTARON CON LA MDPEV TRES ENCUENTROS POR UN VALOR DE $90.000.000, LOS CUALES SE ENCUENTRAN EN FASE PRECONTRACTUAL.", status: "ok", indicadorProducto: "Realizar la implementación de estrategias de promoción de la salud dirigidas a pueblos y comunidades étnicas, sectores LGBTIQ+ y otras poblaciones", meta: 1, atendida: 1 },
+                { id: 54226, action: "Servicios de Salud a Población No Asegurada", budget: 6000000000, exec2024: 0, exec2025: 0, obs: "A LA FECHA DEL INFORME, NO SE HA REGISTRADO PAGO A LA RED HOSPITALARIA POR ESTE CONCEPTO.", status: "retraso", indicadorProducto: "Gestionar el pago a la Red de Atención en Salud por servicios prestados a población a cargo del Departamento", meta: 100, atendida: 0 },
+                { id: 54246, action: "Programa de Atención Psicosocial y Salud Integral a Víctimas (PAPSIVI)", budget: 3000000000, exec2024: 0, exec2025: 0, obs: "EL GOBIERNO VIENE REALIZANDO LOS GIROS A LOS HOSPITALES DIRECTAMENTE, Y EN 2024 ATENDIMOS 3806, PARA 2025 SE IMPLEMENTARA EN YOPAL Y TAURAMENA RECURSOS DE PROGRAMAS NACIONALES - MSPS.", status: "alerta", indicadorProducto: "Fortalecer el desarrollo e implementación del programa de atención psicosocial a víctimas del conflicto armado (PAPSIVI)", meta: 3500, atendida: 3806 },
+                { id: 54313, action: "Certificación de Discapacidad para Población Víctima", budget: 102000000, exec2024: 27931698, exec2025: 0, obs: "EN EL 2024 SE IDENTIFICARON 176 PERSONAS BENEFICIADAS CON EL CERTIFICACIÓN DE DISCAPACIDAD. Y EN EL 2025 VAN 683 PERSONAS CERTIFICADAS A CORTE DE JUNIO. RECURSOS DE TRANFERENCIA GIRO HOSPITAL.", status: "ok", indicadorProducto: "Mantener el Proceso de Certificación de Discapacidad en el Departamento", meta: 580, atendida: 859 },
+            ],
+            educacion: [
+                { id: 49185, action: "Proyectos Pedagógicos Transversales", budget: 410206576, exec2024: 102442980, exec2025: null, summary: "Se ha alcanzado casi la totalidad de la meta, beneficiando a <strong>7,542 personas</strong> con proyectos de DDHH y Educación Sexual.", obs: "PROYECTOS PEDAGÓGICOS TRANSVERSALES (Educación Sexual, Derechos Humanos, etc.)", status: "ok", indicadorProducto: "Implementar proyectos en educación sexual, derechos humanos, educación ambiental, estilos de vida saludable, entre otros", meta: 7550, atendida: 7542 },
+                { id: 52614, action: "Servicio de Transporte Escolar", budget: 37832736305, exec2024: 8145344232, exec2025: null, summary: "Se ha garantizado el transporte a <strong>1,252 estudiantes</strong>, asegurando su permanencia en el sistema educativo.", obs: "Prestación del servicio educativo con estrategias de permanencia: Transporte escolar", status: "ok", indicadorProducto: "Garantizar el transporte para estudiantes que residen en áreas rurales y dispersas", meta: 1253, atendida: 1252, image: "PATimagenes/Transporteescolar.jpeg" },
+                { id: 49206, action: "Residencias Escolares", budget: 5749299885, exec2024: 1238806266, exec2025: null, summary: "Se ha cumplido al <strong>100% la meta</strong> de cobertura en Residencias Escolares, beneficiando a <strong>217 estudiantes</strong>.", obs: "Prestación del servicio educativo con estrategias de permanencia: Residencias Escolares", status: "ok", indicadorProducto: "Sostener el servicio en residencias escolares para estudiantes de zonas rurales de difícil acceso", meta: 217, atendida: 217, image: "PATimagenes/residenciasescolares.jpeg" },
+                { id: 52630, action: "Programa de Alimentación Escolar (PAE)", budget: 25166140190, exec2024: 5417300413, exec2025: null, summary: "El PAE ha llegado a <strong>3,085 estudiantes</strong> víctimas, siendo un pilar fundamental para su asistencia y nutrición.", obs: "Prestación del servicio educativo con estrategias de permanencia: Programa Alimentación Escolar - PAE", status: "ok", indicadorProducto: "Suministrar un complemento alimentario para contribuir a la permanencia y el bienestar de los estudiantes", meta: 3088, atendida: 3085, image: "PATimagenes/plandealimenatcionPAE.jpeg" },
+            ],
+            agricultura: [
+                { id: 52996, action: "Apoyo a Negocios Verdes", budget: 20000000, exec2024: 0, exec2025: 0, obs: "LA SECRETARIA SE ENCUENTRA EN PROCESO DE IDENTIFICACION Y CARACTERIZACION DE POTENCIALES NEGOCIOS VERDES EN LOS MUNICIPIOS DE AGUAZUL, CHAMEZA Y YOPAL.", status: "planeacion", indicadorProducto: "Apoyar negocios verdes para su consolidación", meta: 2, atendida: 0 },
+                { id: 53003, action: "Esquemas de Pagos por Servicios Ambientales (PSA)", budget: 100000000, exec2024: 0, exec2025: 0, obs: "PARA 2025, SE REALIZO UNA CONVOCATORIA PUBLICA PARA BENEFICIAR A PRODUCTORES DE TAMARA, NUNCHIA, PORE Y PAZ DE ARIPORO CON UNIDADES PRODUCTIVAS APICOLAS.", status: "planeacion", indicadorProducto: "Implementar esquemas de PSA que aporten a la conservación y producción sostenible", meta: 5, atendida: 0 },
+                { id: 53020, action: "Apoyo con Activos Productivos", budget: 200000000, exec2024: 0, exec2025: 195000000, obs: "39 PERSONAS VICTIMAS FUERON BENEFICIADAS ATRAVES DE ALIANZAS PRODUCTIVAS, RECIBIENDO ACTIVOS EN LOS SECTORES DE APICULTURA, GANADERIA, PORCICULTURA Y MARACUYA.", status: "ok", indicadorProducto: "Apoyar a productores con activos productivos y capacitación", meta: 400, atendida: 39 },
+                { id: 53057, action: "Maquinaria para la Producción Agrícola", budget: 200000000, exec2024: 0, exec2025: 0, obs: "PARA ESTA VIGENCIA NO SE ANUALIZO.", status: "retraso", indicadorProducto: "Maquinaria para la producción agrícola adquirida", meta: 1, atendida: 0 },
+                { id: 53059, action: "Acceso y Formalización de la Propiedad Rural", budget: 25000000, exec2024: 35000000, exec2025: 25000000, obs: "SE DISPUSO DE UN PROFESIONAL PARA ACOMPAÑAR A LA AGENCIA NACIONAL DE TIERRAS (ANT) EN LOS PROCESOS DE FORMALIZACION.", status: "alerta", indicadorProducto: "Acceso y formalización de la propiedad rural", meta: 5, atendida: 5 },
+                { id: 53115, action: "Líneas de Crédito Empresariales", budget: 250000000, exec2024: 0, exec2025: 0, obs: "LA SECRETARIA SE ENCUENTRA EN PROCESO DE IDENTIFICACION DE POTENCIALES BENEFICIARIOS DE CREDITOS A TRAVES DE UN CONVENIO CON EL IFC. PARA 2025 SE PROYECTARON $60.000.000.", status: "planeacion", indicadorProducto: "Operaciones de crédito realizadas", meta: 50, atendida: 0 },
+                { id: 55882, action: "Asistencia Técnica y Comercialización", budget: 300000000, exec2024: 0, exec2025: 0, obs: "ESTE PROCESO SE ENCUENTRA EN ETAPA DE FORMULACION PARA LA VIGENCIA 2025, CON UNA PROYECCION DE $25.000.000.", status: "planeacion", indicadorProducto: "Beneficiar unidades productivas con asistencia técnica y apoyo en comercialización", meta: 20, atendida: 0 },
+                { id: 55885, action: "Participación en Ferias y Ruedas de Negocios", budget: 100000000, exec2024: null, exec2025: null, obs: "SE BENEFICIARON 44 VICTIMAS EN EVENTOS FERIALES. LA SECRETARIA SE ENCUENTRA EN PROCESO DE REALIZAR LOS FILTROS Y CRUCES DE INFORMACION. PARA 2025 SE PROYECTARON $75.000.000.", status: "planeacion", indicadorProducto: "Generar espacios para la promoción y comercialización de los productos de las familias víctimas", meta: 25, atendida: 44 },
+            ],
+            vivienda: [
+                { id: 53623, action: "Documentos de Planeación en Política de Vivienda", budget: 3317146, exec2024: 0, exec2025: 0, summary: "La acción se encuentra en fase de estructuración del marco normativo de la política.", obs: "AUNQUE SU FORMULACION SUGIERE UN IMPACTO POSITIVO, SE ACLARA QUE SU ALCANCE ES GENERAL PARA TODA LA POBLACION DEL DEPARTAMENTO DE CASANARE Y NO ESTA DIRIGIDA EXCLUSIVAMENTE A LA POBLACION VICTIMA, SE ENCUENTRA EN ESTRUCTURACION DEL MARCO NORMATIVO DE LA POLITICA.", status: "planeacion", indicadorProducto: "Documentos de planeación en política de vivienda", meta: 1, atendida: 0 },
+                { id: 53696, action: "Promover asistencias técnicas jurídicas en saneamiento y titulación de predios", budget: 1377019, exec2024: 0, exec2025: 0, summary: "La acción se encuentra en fase de estructuración del marco normativo.", obs: "AUNQUE SU FORMULACION SUGIERE UN IMPACTO POSITIVO, SE ACLARA QUE SU ALCANCE ES GENERAL PARA TODA LA POBLACION DEL DEPARTAMENTO DE CASANARE Y NO ESTA DIRIGIDA EXCLUSIVAMENTE A LA POBLACION VICTIMA, SE ENCUENTRA EN ESTRUCTURACION DEL MARCO NORMATIVO.", status: "planeacion", indicadorProducto: "Asistencias técnicas y jurídicas realizadas", meta: 10, atendida: 0 },
+                { id: 53706, action: "Apoyo Financiero para Adquisición de Vivienda", budget: 223443813, exec2024: 508486853, exec2025: 169495618, summary: "Se ha realizado una <strong>inversión excepcional</strong> para beneficiar a <strong>13 hogares</strong> con subsidios en el Proyecto Villa Carito.", obs: "PARA LA VIGENCIA 2024: 13 HOGARES VICTIMAS BENEFICIADOS CON SUBSIDIOS DE VIVIENDA NUEVA EN EL MARCO DEL PROYECTO VILLA CARITO (PAZ DE ARIPORO). PARA LA VIGENCIA 2025: 3 HOGARES VICTIMAS BENEFICIADOS EN EL MISMO PROYECTO.", status: "alerta", indicadorProducto: "Hogares beneficiados con adquisición de vivienda", meta: 1500, atendida: 13, image: "PATimagenes/vivienda.jpeg" },
+                { id: 53722, action: "Apoyo Financiero para Mejoramiento de Vivienda", budget: 299363528, exec2024: null, exec2025: null, summary: "Para la vigencia 2025, se encuentra en estructuración el acto administrativo para mejoramientos en los municipios de Pore y San Luis.", obs: "PARA LA VIGENCIA 2025, EN ESTRUCTURACION DE ACTO ADMINISTRATIVO DE MEJORAMIENTO DE LOS MUNICIPIOS DE PORE Y SAN LUIS.", status: "planeacion", indicadorProducto: "Hogares beneficiados con mejoramiento", meta: 700, atendida: 0 },
+                { id: 53744, action: "Apoyo Financiero para Construcción en Sitio Propio", budget: 101664403, exec2024: null, exec2025: 4519041, summary: "Se beneficiaron cinco núcleos familiares víctimas del municipio de Chámeza.", obs: "SE BENEFICIARON CINCO NUCLEOS FAMILIARES VICTIMAS DEL MUNICIPIO DE CHAMEZA.", status: "alerta", indicadorProducto: "Hogares beneficiados con construcción", meta: 800, atendida: 5, image: "PATimagenes/vivienda3.jpeg" },
+            ],
+            integracion: [
+                { id: 52784, action: "Protección Integral del Adulto Mayor", budget: 1884444429, exec2024: 1791528870, exec2025: null, summary: "Se ha <strong>ejecutado el 95% del presupuesto</strong>, demostrando un compromiso total con la protección de <strong>10,000 adultos mayores</strong>.", obs: "PARA LA VIGENCIA 2025 LA PROYECCION ESTA POR VALOR DE : $1.179.941.002 SIN EMBARGO SE ESTA A LA ESPERA DE ADICION DE RECURSOS PARA ESTE COMPONENETE SE REQUIERE AJUSTE ANTE LA UARIV, SE REGISTRO VALOR DE PRESUPUESTO SOLO PARA UNA VIGENCIA POR ESO EL CUMPLIMIENTO ESTA POR ESTE %", status: "ok", indicadorProducto: "Implementar estrategias de promoción y garantía de derechos para la población adulta mayor", meta: 10000, atendida: 0, image: "PATimagenes/AdultoMayor.jpeg" },
+            ],
+            cultura: [
+                { id: 53127, action: "Eventos de promoción de actividades culturales - Conmemoraciones", budget: 120000000, exec2024: 30000000, exec2025: null, summary: "Se realizó con éxito el <strong>5º Concurso Inspírate por la Paz</strong>. Se proyecta una inversión similar para 2025.", obs: "PARA VIGENCIA 2024 SE REALIZO EL 5 CONCURSO INSPIRATE POR LA PAZ SHOW ARTISTICO. PARA VIGENCIA 2025 SE PROYECTARON $30.000.000 SIN EMBARGO ESTAMOS A LA ESPERA DE ADICION DE RECURSOS Y DE LA MISMA FORMA LA CONCERTACION CON LA MDPV Y SECRETARIA DE GOBIERNO PARA DEFINIR FECHA Y LUGAR.", status: "ok", indicadorProducto: "Desarrollar una agenda cultural anual", meta: 4, atendida: 1, image: "PATimagenes/cultura (1).jpeg" },
+                { id: 53430, action: "Apoyo a la Circulación Artística y Publicaciones", budget: 10000000, exec2024: 0, exec2025: 0, summary: "Para la vigencia 2025, se está a la espera de adición de recursos y de la concertación con la MDPEV.", obs: "PARA LA VIGENCIA 2025, SE ESTA A LA ESPERA DE ADICION DE RECURSOS Y DE LA CONCERTACION CON LA MDPEV.", status: "planeacion", indicadorProducto: "Apoyar la circulación de contenidos culturales y publicaciones de creadores casanareños", meta: 1, atendida: 0 },
+                { id: 53133, action: "Contratación de Promotores de Lectura", budget: 134400000, exec2024: 8400000, exec2025: null, summary: "Se contrataron <strong>dos promotoras de lectura</strong> para los municipios de Tauramena y Sácama.", obs: "PARA EL 2024 SE CONTRATARON DOS PROMOTORAS PARA TAURAMENA Y SACAMA. PARA EL 2025 SE CONTRATARON DOS INSTRUCTORES POR CUATRO MESES PARA LOS MISMOS MUNICIPIOS.", status: "ok", indicadorProducto: "Realizar acciones de promoción de lectura y extensión bibliotecaria", meta: 2, atendida: 2 },
+                { id: 53136, action: "Contratación de Instructores de Formación Artística", budget: 134400000, exec2024: 0, exec2025: 0, summary: "No hubo contratación en 2024. Para 2025, se contrataron dos instructores por cuatro meses para Yopal y Támara.", obs: "PARA EL 2024 NO SE CONTRATARON INSTRUCTORES POR QUE LAS HV NO LLEGARON A TIEMPO. PARA 2025 SE CONTRATARON DOS INSTRUCTORES POR CUATRO MESES PARA YOPAL Y TAMARA.", status: "retraso", indicadorProducto: "Implementar y generar espacios para procesos de formación artística y cultural", meta: 2, atendida: 0, image: "PATimagenes/procesosdeformacionartisticascultura.jpeg" },
+                { id: 53470, action: "Promoción de Lectura y Extensión Bibliotecaria", budget: 42073043, exec2024: 5140148, exec2025: null, summary: "Se atendieron 78 de los 480 usuarios meta, a través de programas de lectura y extensión bibliotecaria en 2024. Se continúa con la atención, pero el reporte de beneficiarios se encuentra en proceso por cruce de información con la UARIV en 2025.", obs: "SE ATENDIERON 78 DE LOS 480 USUARIOS META, A TRAVES DE PROGRAMAS DE LECTURA Y EXTENSION BIBLIOTECARIA. SE CONTINUA CON LA ATENCION, PERO EL REPORTE DE BENEFICIARIOS SE ENCUENTRA EN PROCESO POR CRUCE DE INFORMACION CON LA UARIV.", status: "ok", indicadorProducto: "Realizar acciones de promoción de lectura", meta: 480, atendida: 0 },
+                { id: 53491, action: "Procesos de Formación Artística y Cultural", budget: 70121739, exec2024: 17089652, exec2025: null, summary: "Se atendieron 19 personas víctimas en 2024. Para el 2025 se continúa con la atención de procesos de formación artística o cultural en proceso por cruce de información con la UARIV.", obs: "SE ATENDIERON 19 PERSONAS VICTIMAS EN 2024. PARA EL 2025 SE CONTINUA CON LA ATENCION DE PROCESOS DE FORMACION ARTISTICA O CULTURAL EN PROCESO POR CRUCE DE INFORMACION CON LA UARIV.", status: "ok", indicadorProducto: "Implementar y generar espacios para procesos de formación", meta: 800, atendida: 0, image: "PATimagenes/procesosdeormacionartisitcasdecueltura.jpeg" },
+            ],
+            indercas: [
+                { id: 52848, action: "Eventos Deportivos Comunitarios", budget: 85000000, exec2024: 0, exec2025: 0, obs: "PARA LA VIGENCIA 2024 NO SE EJECUTARON RECURSOS. PARA LA VIGENCIA 2025 SE ANUALIZARON $40.000.000 EN CONCERTACION CON LA MDV PARA DESARROLLAR EL EVENTO EN MUNICIPIO DE CHAMEZA. SIN EMBARGO A LA ESPERA DE ADICION DE RECURSOS.", status: "retraso", indicadorProducto: "Eventos deportivos comunitarios realizados", meta: 16, atendida: 0 },
+            ]
+        };
+
+        function formatCurrency(value) {
+            if (value === null || typeof value === 'undefined') return 'N/A';
+            return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(value);
+        }
+
+
+
+        function createCard(item, section = null) {
+            const totalExecution = (item.exec2024 || 0) + (item.exec2025 || 0);
+            const totalPercentage = item.budget > 0 ? (totalExecution / item.budget) * 100 : 0;
+            
+            let colorClass = 'gray';
+            if (item.status === 'ok') { colorClass = 'green'; }
+            if (item.status === 'planeacion') { colorClass = 'yellow'; }
+            if (item.status === 'retraso') { colorClass = 'red'; }
+            if (item.status === 'alerta') { colorClass = 'purple'; }
+            
+            const gradientStyle = `background: conic-gradient(rgb(var(--color-${colorClass}-500)) ${totalPercentage * 3.6}deg, #e5e7eb ${totalPercentage * 3.6}deg)`;
+            
+            const meta = parseFloat(String(item.meta).replace(/,/g, ''));
+            const atendida = parseFloat(String(item.atendida).replace(/,/g, ''));
+            const productPercentage = meta > 0 ? (atendida / meta) * 100 : 0;
+
+            return `
+                <div class="card bg-white rounded-2xl shadow-lg overflow-hidden" data-status="${item.status}">
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h4 class="font-bold text-gray-800 text-lg pr-4">${item.action}</h4>
+                                <span class="text-xs font-semibold bg-gray-100 text-gray-600 px-2 py-1 rounded-md inline-block mt-1">ID: ${item.id}</span>
+                            </div>
+                            <div class="flex-shrink-0 progress-circle" style="${gradientStyle}">
+                                <span class="value text-${colorClass}-600">${Math.round(totalPercentage)}<span class="text-base">%</span></span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4 flex-grow">
+                             <div class="summary-text text-sm text-gray-600 leading-relaxed">${item.obs}</div>
+                             <div class="full-observation-container">
+                                <div class="mt-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                    <p class="text-sm text-gray-800">${item.obs}</p>
+                                </div>
+                             </div>
+                             <button onclick="toggleObservation(this)" class="text-sm text-blue-600 hover:text-blue-800 font-semibold mt-2">Ver detalle</button>
+                        </div>
+
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                             <p class="text-xs text-gray-500 font-semibold mb-2">INDICADOR DE PRODUCTO</p>
+                             <p class="text-sm font-medium text-gray-700 mb-2">${item.indicadorProducto}</p>
+                             <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1">
+                                <div class="bg-gobernacion-green h-2.5 rounded-full" style="width: ${productPercentage > 100 ? 100 : productPercentage}%"></div>
+                             </div>
+                             <div class="text-right text-sm font-semibold gobernacion-green">${item.atendida} de ${item.meta}</div>
+                        </div>
+                        
+                        <div class="mt-auto pt-4 border-t border-gray-200">
+                            <div class="mb-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-medium text-gray-500">Presupuesto Cuatrienio</span>
+                                    <span class="text-lg font-bold text-gray-900">${formatCurrency(item.budget)}</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4 text-center mt-4">
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                    <p class="text-xs text-gray-500">Ejecutado 2024</p>
+                                    <p class="font-semibold text-base text-gray-800">${formatCurrency(item.exec2024)}</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                    <p class="text-xs text-gray-500">Ejecutado 2025</p>
+                                    <p class="font-semibold text-base text-gray-800">${formatCurrency(item.exec2025)}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function toggleObservation(button) {
+            const container = button.previousElementSibling;
+            container.classList.toggle('open');
+            button.textContent = container.classList.contains('open') ? 'Ocultar detalle' : 'Ver detalle';
+        }
+
+        function filterCards(status) {
+            const allCards = document.querySelectorAll('.card');
+            allCards.forEach(card => {
+                if (status === 'all' || card.dataset.status === status) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            const activeButton = Array.from(buttons).find(btn => btn.textContent.toLowerCase().includes(status.replace('alerta', 'mejora').replace('retraso', 'avance')));
+            if(activeButton || status === 'all') (activeButton || buttons[0]).classList.add('active');
+        }
+
+        function renderCards() {
+            const style = document.createElement('style');
+            style.innerHTML = `
+                :root {
+                    --color-green-500: 34 197 94;
+                    --color-yellow-500: 234 179 8;
+                    --color-red-500: 239 68 68;
+                    --color-purple-600: 147 51 234;
+                    --color-gray-500: 107 114 128;
+                }
+                .filter-btn {
+                    padding: 8px 16px; border-radius: 9999px; font-weight: 600; transition: all 0.2s;
+                    background-color: #f3f4f6; color: #4b5563;
+                }
+                 .filter-btn:hover { background-color: #e5e7eb; }
+            `;
+            document.head.appendChild(style);
+            
+            // Renderizar las tarjetas sin imágenes
+            for (const dependency in patData) {
+                const container = document.querySelector(`[data-dependency="${dependency}"]`);
+                if (container) {
+                    container.innerHTML = patData[dependency].map(item => createCard(item, dependency)).join('');
+                }
+            }
+            
+            // Agregar imágenes después de los títulos de las secretarías
+            console.log('Iniciando agregado de imágenes para secretarías...');
+            addSecretariatImage('salud', 'Secretaría de Salud');
+            addSecretariatImage('educacion', 'Secretaría de Educación');
+            addSecretariatImage('gobierno', 'Secretaría de Gobierno');
+            addSecretariatImage('agricultura', 'Secretaría de Agricultura');
+            addSecretariatImage('vivienda', 'Dirección de Vivienda');
+            addSecretariatImage('cultura', 'Dirección de Cultura');
+            addSecretariatImage('indercas', 'INDERCAS');
+            addSecretariatImage('integracion', 'Secretaría de Integración Social');
+            console.log('Finalizado agregado de imágenes para secretarías.');
+        }
+        
+        function renderDepartmentChart(departmentName) {
+            const actions = patData[departmentName];
+            if (!actions) return;
+
+            const statusCounts = {
+                ok: actions.filter(a => a.status === 'ok').length,
+                planeacion: actions.filter(a => a.status === 'planeacion').length,
+                alerta: actions.filter(a => a.status === 'alerta').length,
+                retraso: actions.filter(a => a.status === 'retraso').length,
+            };
+
+            const ctx = document.getElementById(`${departmentName}Chart`);
+            if (!ctx) return;
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['En Ejecución', 'En Planeación', 'Oportunidades de Mejora', 'Sin Avance'],
+                    datasets: [{
+                        label: 'Número de Acciones',
+                        data: [statusCounts.ok, statusCounts.planeacion, statusCounts.alerta, statusCounts.retraso],
+                        backgroundColor: ['#009A3F', '#FCD116', '#CE1126', '#FF6B35'],
+                        borderRadius: 5,
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: { 
+                        legend: { display: false },
+                        datalabels: {
+                            color: 'white',
+                            anchor: 'end',
+                            align: 'start',
+                            font: {
+                                weight: 'bold',
+                                size: 14,
+                            },
+                            formatter: (value) => value > 0 ? value : ''
+                        }
+                    },
+                    scales: {
+                        x: { beginAtZero: true, grid: { display: false }, ticks: { precision: 0 } },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function renderAllCharts() {
+            Chart.register(ChartDataLabels);
+            
+            Object.keys(patData).forEach(dep => renderDepartmentChart(dep));
+
+            // Gráfica General de Presupuesto
+            const generalBudgetData = {
+                'Salud': 90822000000,
+                'Educación': 69158382955,
+                'Gobierno': 8202496871,
+                'Integración Social': 1884444429,
+                'Agricultura': 1195000000,
+                'Vivienda': 629165908,
+                'Cultura': 510994783,
+                'INDERCAS': 85000000
+            };
+
+            const generalBudgetCtx = document.getElementById('generalBudgetChart');
+            if (generalBudgetCtx) {
+                new Chart(generalBudgetCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(generalBudgetData),
+                        datasets: [{
+                            label: 'Presupuesto (Millones)',
+                            data: Object.values(generalBudgetData).map(value => value / 1000000),
+                            backgroundColor: [
+                                '#009A3F', // Verde - Salud
+                                '#FCD116', // Amarillo - Educación
+                                '#CE1126', // Rojo - Gobierno
+                                '#009A3F', // Verde - Integración
+                                '#FCD116', // Amarillo - Agricultura
+                                '#CE1126', // Rojo - Vivienda
+                                '#009A3F', // Verde - Cultura
+                                '#FCD116'  // Amarillo - INDERCAS
+                            ],
+                            borderRadius: 8,
+                            borderWidth: 0,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            datalabels: {
+                                color: 'white',
+                                anchor: 'end',
+                                align: 'top',
+                                font: {
+                                    weight: 'bold',
+                                    size: 12,
+                                },
+                                formatter: (value) => `$${value.toFixed(0)}M`
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: '#e5e7eb' },
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + value + 'M';
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: {
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const dependencyBudgets = {
+                'Salud': 90822000000, 'Educación': 69158382955, 'Gobierno': 8202496871,
+                'Integración S.': 1884444429, 'Agricultura': 1195000000, 'Vivienda': 629165908,
+                'Cultura': 510994783, 'INDERCAS': 85000000
+            };
+            const sortedBudgets = Object.entries(dependencyBudgets).sort(([,a],[,b]) => b-a);
+            const top3 = sortedBudgets.slice(0, 3);
+            const others = sortedBudgets.slice(3).reduce((acc, [, value]) => acc + value, 0);
+            
+            const chartLabels = [...top3.map(item => item[0]), 'Otros'];
+            const chartData = [...top3.map(item => item[1]), others];
+            
+            const headerCtx = document.getElementById('headerBudgetChart');
+            if(headerCtx) {
+                new Chart(headerCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: chartLabels,
+                        datasets: [{
+                            data: chartData,
+                            backgroundColor: ['#009A3F', '#FCD116', '#CE1126', '#FF6B35'],
+                            borderColor: '#f0f2f5',
+                            borderWidth: 4,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { font: { size: 14 } } },
+                            datalabels: {
+                               display: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            const analysisCtx = document.getElementById('analysisChart');
+            if(analysisCtx) {
+                new Chart(analysisCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: chartLabels,
+                        datasets: [{
+                            data: chartData,
+                            backgroundColor: ['#009A3F', '#FCD116', '#CE1126', '#FF6B35'],
+                            borderColor: '#fff',
+                            borderWidth: 4,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { font: { size: 14 } } },
+                            datalabels: {
+                                formatter: (value, ctx) => {
+                                    let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                    let percentage = (value*100 / sum).toFixed(1) + "%";
+                                    return percentage;
+                                },
+                                color: '#fff',
+                                font: { weight: 'bold', size: 14 }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Funciones para la navegación de la portada
+        function scrollToContent() {
+            const header = document.querySelector('header');
+            if (header) {
+                header.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function scrollToPortada() {
+            const portada = document.getElementById('portada');
+            if (portada) {
+                portada.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Agregar botón flotante para volver a la portada
+        function addFloatingButton() {
+            const floatingBtn = document.createElement('button');
+            floatingBtn.innerHTML = `
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+                </svg>
+            `;
+            floatingBtn.className = 'fixed bottom-8 right-8 bg-green-600 hover:bg-green-700 text-white p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 z-50';
+            floatingBtn.onclick = scrollToPortada;
+            floatingBtn.title = 'Volver al inicio';
+            document.body.appendChild(floatingBtn);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCards();
+            renderAllCharts();
+            addFloatingButton();
+        });
+
+                // Función para obtener imágenes para secretaría basada en el nombre
+        function getImagesForSecretariat(secretariatName) {
+            console.log(`Buscando imágenes para: "${secretariatName}"`);
+            
+            const secretariatImages = {
+                'salud': [
+                    'asistencia-humanitaria.jpeg',
+                    'alertas-tempranas.jpeg',
+                    'seguridad alimentaria, secretaria de integracion social y mujer.jpeg',
+                    'seguridad alimentaria, secretaria de integracion social y mujer (2).jpeg'
+                ],
+                'educacion': [
+                    'Transporteescolar.jpeg',
+                    'residenciasescolares.jpeg',
+                    'plandealimenatcionPAE.jpeg'
+                ],
+                'gobierno': [
+                    'Secretariagobierno-equipo profeionales.jpeg',
+                    'Mesasdetrabajo.jpeg',
+                    'acompaÃ±amiento-juridico.jpeg',
+                    'alertas-tempranas.jpeg',
+                    'asistenciatecnicamesasmunicipales.jpeg',
+                    'gobierno conmemoracioness medias desatisfaciion.jpeg',
+                    'gobierno conmemoracioness medias desatisfaciion (2).jpeg',
+                    'gobierno conmemoracioness medias desatisfaciion (3).jpeg',
+                    'gobierno conmemoracioness medias desatisfaciion (4).jpeg',
+                    'gobierno conmemoracioness medias desatisfaciion (5).jpeg',
+                    'gobierno conmemoracioness medias desatisfaciion (6).jpeg',
+                    'gobierno conmemoracioness medias desatisfaciion (7).jpeg'
+                ],
+                'agricultura': [
+                    'agricultura.jpeg',
+                    'agricultura (2).jpeg',
+                    'agricultura (3).jpeg',
+                    'agricultura (4).jpeg'
+                ],
+                'vivienda': [
+                    'vivienda.jpeg',
+                    'vivienda3.jpeg'
+                ],
+                'cultura': [
+                    'cultura (1).jpeg',
+                    'cultura (2).jpeg',
+                    'cultura (3).jpeg',
+                    'cultura (4).jpeg',
+                    'cultura (5).jpeg',
+                    'procesosdeformacionartisticascultura.jpeg',
+                    'procesosdeormacionartisitcasdecueltura.jpeg'
+                ],
+                'integracion': [
+                    'AdultoMayor.jpeg',
+                    'Adulto MAyor.jpeg',
+                    'Adultoamyor.jpeg'
+                ],
+                'indercas': [
+                    'participacion.jpeg',
+                    'mesa-participacion.jpeg'
+                ]
+            };
+            
+            const sectionKey = secretariatName.toLowerCase().replace('secretaría de ', '').replace('dirección de ', '');
+            console.log(`Clave de sección calculada: "${sectionKey}"`);
+            console.log(`Claves disponibles:`, Object.keys(secretariatImages));
+            
+            const images = secretariatImages[sectionKey] ? secretariatImages[sectionKey].map(img => `PATimagenes/${img}`) : [];
+            console.log(`Imágenes encontradas:`, images);
+            
+            return images;
+        }
+
+        // Función para agregar imágenes después del título de la secretaría
+        function addSecretariatImage(secretariatId, secretariatName) {
+            console.log(`Agregando imágenes para: ${secretariatName} (ID: ${secretariatId})`);
+            
+            const section = document.getElementById(secretariatId);
+            if (!section) {
+                console.error(`No se encontró la sección con ID: ${secretariatId}`);
+                return;
+            }
+            
+            const imagePaths = getImagesForSecretariat(secretariatName);
+            console.log(`Imágenes encontradas para ${secretariatName}:`, imagePaths);
+            
+            if (imagePaths.length === 0) {
+                console.warn(`No se encontraron imágenes para: ${secretariatName}`);
+                return;
+            }
+            
+            // Crear el contenedor de imágenes después del título y antes del resumen
+            const imageContainer = document.createElement('div');
+            imageContainer.className = 'mb-8';
+            
+            // Crear grid de imágenes
+            const gridClass = imagePaths.length <= 2 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
+            imageContainer.innerHTML = `
+                <div class="grid ${gridClass} gap-4 max-w-6xl mx-auto">
+                    ${imagePaths.map((path, index) => `
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                            <img src="${path}" alt="Imagen ${index + 1} de ${secretariatName}" 
+                                 class="w-full h-48 object-contain" 
+                                 onerror="console.error('Error cargando imagen:', this.src); this.parentElement.style.display='none'" 
+                                 onload="console.log('Imagen cargada exitosamente:', this.src)">
+                            <div class="p-4">
+                                <p class="text-sm text-gray-600 text-center">${secretariatName}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            // Insertar después del título (h2) y antes del div del resumen
+            const title = section.querySelector('h2');
+            if (title && title.nextElementSibling) {
+                section.insertBefore(imageContainer, title.nextElementSibling);
+                console.log(`Imágenes insertadas exitosamente para: ${secretariatName}`);
+            } else {
+                console.error(`No se pudo insertar las imágenes para: ${secretariatName}`);
+            }
+        }
+    </script>
+
+    <!-- Sección de Nuevas Propuestas de Proyectos -->
+    <section class="py-16 bg-gradient-to-br from-green-50 to-green-100">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-green-800 mb-4">Nuevas Propuestas de Proyectos</h2>
+                <p class="text-lg text-green-700 max-w-3xl mx-auto">
+                    Propuestas innovadoras para el fortalecimiento del desarrollo social y la generación de ingresos en el departamento de Casanare
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                <!-- Propuesta 1: Asistencia Técnica Artesanal -->
+                <div class="bg-white rounded-2xl shadow-xl border-l-8 border-blue-500 p-8 transform hover:scale-105 transition-all duration-300">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.99l-.318.158a6 6 0 01-3.86.99l-.318-.158a6 6 0 00-3.86-.99l-2.387.477a2 2 0 00-1.022.547A2 2 0 004 17.5v.5a2 2 0 002 2h12a2 2 0 002-2v-.5a2 2 0 00-.572-2.072z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-800">GENERACIÓN DE INGRESOS</h3>
+                            <p class="text-blue-600 font-semibold">Asistencia Técnica Artesanal</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-800 mb-2">Descripción del Proyecto</h4>
+                            <p class="text-gray-700 leading-relaxed">
+                                Realizar la asistencia técnica y acompañamiento a las comunidades con mayor vocación artesanal, para fortalecer sus aspectos psicosociales individuales y colectivos, sus capacidades y competencias humanas, productivas, técnicas y comerciales.
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <h5 class="font-semibold text-blue-800 text-sm">Meta</h5>
+                                <p class="text-blue-700 font-bold">20 Hogares</p>
+                            </div>
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <h5 class="font-semibold text-blue-800 text-sm">Presupuesto</h5>
+                                <p class="text-blue-700 font-bold">$26,238,442</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-100 rounded-lg p-4">
+                            <h5 class="font-semibold text-blue-800 mb-2">Responsable</h5>
+                            <p class="text-blue-700">SECRETARIA DE INTEGRACIÓN DESARROLLO SOCIAL Y MUJER</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Propuesta 2: Estrategias de Cuidado -->
+                <div class="bg-white rounded-2xl shadow-xl border-l-8 border-purple-500 p-8 transform hover:scale-105 transition-all duration-300">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-800">GENERACIÓN DE INGRESOS</h3>
+                            <p class="text-purple-600 font-semibold">Estrategias de Cuidado</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-800 mb-2">Descripción del Proyecto</h4>
+                            <p class="text-gray-700 leading-relaxed">
+                                Implementar estrategias para reconocer, reducir y redistribuir las cargas del trabajo del cuidado de las mujeres, promoviendo el desarrollo integral en habilidades educativas, sociales y laborales.
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-purple-50 rounded-lg p-4">
+                                <h5 class="font-semibold text-purple-800 text-sm">Meta</h5>
+                                <p class="text-purple-700 font-bold">20 Personas</p>
+                            </div>
+                            <div class="bg-purple-50 rounded-lg p-4">
+                                <h5 class="font-semibold text-purple-800 text-sm">Presupuesto</h5>
+                                <p class="text-purple-700 font-bold">$17,492,430</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-purple-100 rounded-lg p-4">
+                            <h5 class="font-semibold text-purple-800 mb-2">Responsable</h5>
+                            <p class="text-purple-700">SECRETARIA DE INTEGRACIÓN DESARROLLO SOCIAL Y MUJER</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl p-6 max-w-4xl mx-auto">
+                    <h3 class="text-2xl font-bold mb-4">Impacto Esperado</h3>
+                    <p class="text-lg leading-relaxed">
+                        Estas propuestas buscan fortalecer el tejido social de Casanare a través del desarrollo de capacidades productivas y la promoción de la equidad de género, contribuyendo al desarrollo sostenible del departamento.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
